@@ -56,7 +56,15 @@ def model_fn():
 
 
 # Initialize federated learning process
-iterative_process = tff.learning.build_federated_averaging_process(model_fn)
+client_optimizer_fn = tff.learning.optimizers.build_sgdm(learning_rate=0.01)
+server_optimizer_fn = tff.learning.optimizers.build_sgdm(learning_rate=1.0)
+
+# Initialize federated learning process
+iterative_process = tff.learning.algorithms.build_weighted_fed_avg(
+    model_fn=model_fn,
+    client_optimizer_fn=client_optimizer_fn,  # Corrected optimizer type
+    server_optimizer_fn=server_optimizer_fn   # Corrected optimizer type
+)
 state = iterative_process.initialize()
 
 # Set up logging folder
